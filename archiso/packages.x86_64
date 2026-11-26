@@ -1,0 +1,122 @@
+# Paquetes de Arch-linX (ISO con sistema preinstalado)
+# Arquitectura: x86_64
+
+# Sistema base y kernel
+base
+base-devel
+linux
+linux-lts
+linux-firmware
+mkinitcpio
+mkinitcpio-archiso
+
+# Microcode
+amd-ucode
+intel-ucode
+
+# Arranque ISO (archiso maneja UEFI/BIOS)
+syslinux
+systemd-resolvconf
+
+# Herramientas de sistema de archivos
+dosfstools
+e2fsprogs
+gptfdisk
+parted
+
+# Red
+networkmanager
+network-manager-applet
+openssh
+dhcpcd
+iwd
+iw
+wpa_supplicant
+wireless-regdb
+wireless_tools
+
+# Utilidades basicas
+sudo
+neovim
+less
+curl
+wget
+git
+man-db
+man-pages
+zip
+unzip
+p7zip
+
+# Audio
+pipewire
+pipewire-pulse
+pipewire-alsa
+pipewire-jack
+wireplumber
+pipewire-audio
+alsa-utils
+alsa-lib
+alsa-firmware
+pavucontrol
+
+# Fuentes
+noto-fonts
+noto-fonts-emoji
+
+# Drivers de video Intel y AMD
+mesa
+lib32-mesa
+xf86-video-amdgpu
+xf86-video-ati
+xf86-video-intel
+vulkan-radeon
+vulkan-intel
+
+# Laptop
+tlp
+brightnessctl
+libinput
+
+# Entorno grafico 1: Niri + Noctalia (Wayland)
+niri
+noctalia
+xorg-xwayland
+wl-clipboard
+xdg-desktop-portal
+xdg-desktop-portal-gnome
+xdg-user-dirs
+polkit
+
+# Entorno grafico 2: i3 (X11)
+i3-wm
+i3status
+i3lock
+dmenu
+xorg-server
+xorg-xinit
+xorg-xrandr
+xorg-xset
+xorg-xinput
+picom
+feh
+dunst
+
+# Gestor de sesiones
+greetd
+greetd-tuigreet
+
+# Administrador de archivos
+thunar
+thunar-volman
+gvfs
+ntfs-3g
+exfat-utils
+
+# Aplicaciones esenciales
+alacritty
+neovim
+qutebrowser
+
+# Escritorio y compatibilidad
+xdg-utils

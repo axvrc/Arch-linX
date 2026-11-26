@@ -1,0 +1,11 @@
+Bienvenido a Arch-linX.
+
+Esta es una version live del sistema. Al iniciar sesion puedes elegir
+entre Niri (Wayland) e i3 (X11) en el gestor de inicio.
+
+Usuario: linX
+Contrasena: 12345
+
+Para Wi-Fi, usa iwctl o nmtui. Ethernet deberia funcionar automaticamente.
+
+Guia de Arch Linux: https://wiki.archlinux.org/title/Installation_guide
