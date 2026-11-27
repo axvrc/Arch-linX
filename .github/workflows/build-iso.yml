@@ -1,12 +1,9 @@
-name: Build and Release Arch-linX ISO
+name: Build and Upload Arch-linX ISO
 
 on:
   push:
     branches: [master]
   workflow_dispatch:
-
-permissions:
-  contents: write
 
 jobs:
   build:
@@ -34,26 +31,17 @@ jobs:
           mkdir -p out work
           sudo mkarchiso -v -w ./work -o ./out ./archiso
 
-      - name: Get ISO filename
-        id: iso
+      - name: Upload ISO to transfer.sh
+        id: upload
         run: |
           iso_file=$(ls ./out/*.iso | head -n 1)
-          echo "file=${iso_file}" >> $GITHUB_OUTPUT
-          echo "name=$(basename ${iso_file})" >> $GITHUB_OUTPUT
+          echo "Subiendo $(basename "$iso_file") a transfer.sh..."
+          url=$(curl --upload-file "$iso_file" "https://transfer.sh/$(basename "$iso_file")")
+          echo "url=$url" >> $GITHUB_OUTPUT
+          echo "=================================="
+          echo "URL de descarga: $url"
+          echo "=================================="
 
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: v0.1-alpha-${{ github.run_number }}
-          name: Arch-linX v0.1-alpha-${{ github.run_number }}
-          body: |
-            ISO de Arch-linX generada automaticamente desde el commit `${{ github.sha }}`.
-
-            ### Entornos incluidos
-            - Niri + noctalia (Wayland)
-            - i3 (X11)
-
-            ### Inicio de sesion
-            - Usuario: `linX`
-            - Contrasena: `12345`
-          files: ${{ steps.iso.outputs.file }}
+      - name: Mostrar URL de descarga
+        run: |
+          echo "Descarga la ISO desde: ${{ steps.upload.outputs.url }}"
