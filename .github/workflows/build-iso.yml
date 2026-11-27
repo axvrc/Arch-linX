@@ -1,0 +1,59 @@
+name: Build and Release Arch-linX ISO
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+      options: --privileged
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize pacman keyring
+        run: |
+          pacman-key --init
+          pacman-key --populate archlinux
+
+      - name: Install build dependencies
+        run: |
+          pacman -Syu --noconfirm
+          pacman -S --noconfirm archiso sudo
+
+      - name: Build ISO
+        run: |
+          mkdir -p out work
+          sudo mkarchiso -v -w ./work -o ./out ./archiso
+
+      - name: Get ISO filename
+        id: iso
+        run: |
+          iso_file=$(ls ./out/*.iso | head -n 1)
+          echo "file=${iso_file}" >> $GITHUB_OUTPUT
+          echo "name=$(basename ${iso_file})" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v0.1-alpha-${{ github.run_number }}
+          name: Arch-linX v0.1-alpha-${{ github.run_number }}
+          body: |
+            ISO de Arch-linX generada automaticamente desde el commit `${{ github.sha }}`.
+
+            ### Entornos incluidos
+            - Niri + noctalia (Wayland)
+            - i3 (X11)
+
+            ### Inicio de sesion
+            - Usuario: `linX`
+            - Contrasena: `12345`
+          files: ${{ steps.iso.outputs.file }}

@@ -8,9 +8,10 @@ The long-term vision is to evolve this into a personal ISO (built with `archiso`
 
 ## Current stage
 
-- Repository contains `install.sh` v0.1 and `README.md`.
-- Script installs a complete Arch system from the official live ISO.
-- Next expected work: test in VM, fix issues, then iterate to v0.2.
+- Repository contains an `archiso/` profile and `README.md`.
+- `install.sh` was moved to `legacy/`; it is no longer the primary delivery method.
+- `archiso/` profile builds a bootable live ISO with Arch-linX preconfigured.
+- Next expected work: build and test the ISO in VM, fix issues, then iterate to v0.2.
 
 ## Locked decisions
 
@@ -21,7 +22,7 @@ The long-term vision is to evolve this into a personal ISO (built with `archiso`
 | Bootloader | GRUB |
 | Disk handling v0.1 | Automatic full-disk wipe; target disk passed as argument |
 | Swap | None |
-| Window manager | Niri (primary); i3 and OpenBox planned as optional later |
+| Window manager | Niri + noctalia (primary); i3 as secondary environment |
 | File manager | Thunar |
 | Web browser | qutebrowser |
 | Terminal | Alacritty |
@@ -37,22 +38,21 @@ The long-term vision is to evolve this into a personal ISO (built with `archiso`
 | Root account | Locked; root access via `sudo` only |
 | Default locale | `es_MX.UTF-8` |
 | Default timezone | `America/Mexico_City` |
-| Console keymap | `es` |
+| Console keymap | `us` |
 | Package source | Official Arch repositories only (no custom repos in v0.1) |
 
 ## Architecture decisions
 
 1. **Start simple, evolve later.**
-   - Phase 1: Bash install script (`install.sh`). ✅ Current.
-   - Phase 2: `archiso` profile that embeds the script and generates a bootable ISO.
-   - Phase 3 (optional): personal PKGBUILDs and a private package repository.
+   - Phase 1: Bash install script (`install.sh`). ✅ Completed; moved to `legacy/`.
+   - Phase 2: `archiso` profile that builds a preconfigured live ISO. ✅ Current.
+   - Phase 3 (optional): installer to disk, persistence, or personal PKGBUILDs.
    - Phase 4 (very unlikely): a true Arch fork.
 
 2. **Use official Arch tooling.**
-   - `pacstrap`, `arch-chroot`, `genfstab`, `pacman` for installation.
-   - `sgdisk` for GPT partitioning.
-   - `archiso` for ISO generation (future).
-   - `GRUB` as bootloader because it supports both UEFI and BIOS from the same GPT layout.
+   - `archiso` for ISO generation and boot (UEFI/BIOS).
+   - `pacman` for package management.
+   - `run_before_squashfs.sh` for final system configuration during ISO build.
 
 3. **Target environments.**
    - Primary: bare-metal UEFI/BIOS laptops and desktops.
@@ -91,17 +91,21 @@ When working on this project:
 
 ## Open questions / future work
 
-- [ ] Test `install.sh` on UEFI VM.
-- [ ] Test `install.sh` on BIOS VM.
-- [ ] Add disk selection/interactive partitioning for v0.2.
-- [ ] Add optional i3/OpenBox installation.
+- [ ] Build and test ISO on UEFI VM.
+- [ ] Build and test ISO on BIOS VM.
+- [ ] Add persistence support for live USB.
+- [ ] Add optional installer to disk for v0.2.
+- [ ] Add optional OpenBox environment.
 - [ ] Add dotfiles and theme configuration.
-- [ ] Build ISO with `archiso`.
+- [x] Build ISO profile with `archiso`.
+- [x] Add i3 as secondary environment.
 
 ## Useful references
 
 - Arch Installation Guide: https://wiki.archlinux.org/title/Installation_guide
 - archiso: https://wiki.archlinux.org/title/Archiso
 - pacman: https://wiki.archlinux.org/title/Pacman
-- GRUB: https://wiki.archlinux.org/title/GRUB
 - Niri: https://github.com/YaLTeR/niri
+- noctalia: https://github.com/noctalia-dev/noctalia
+- i3: https://i3wm.org/
+- greetd: https://git.sr.ht/~kennylevinsen/greetd

@@ -1,0 +1,8 @@
+# Archiso build artifacts
+work/
+out/
+*.iso
+*.img
+
+# Python HTTP server
+*.log

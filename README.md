@@ -1,18 +1,21 @@
 # Arch-linX
 
-Script de instalación automatizada de Arch Linux personalizado.
+Sistema Arch Linux personalizado construido con `archiso`.
 
-## Descripción
+## Descripcion
 
-Este repositorio contiene un script Bash que instala un sistema Arch Linux
-completamente configurado desde el entorno live oficial de Arch. Está pensado
-para uso personal y como punto de partida para una posible ISO futura.
+Este repositorio contiene un perfil de `archiso` que genera una ISO booteable
+con Arch-linX: un entorno Arch Linux preconfigurado para uso personal.
 
-## Características de la v0.1
+Ya no se usa un script de instalacion separado. La ISO arranca directamente
+al sistema configurado.
 
-- Compatibilidad con **UEFI y BIOS** usando GRUB y tabla GPT.
-- Particionado automático de disco completo (sin swap).
-- Entorno gráfico **Niri** (Wayland).
+## Caracteristicas de la v0.1
+
+- ISO booteable en **UEFI y BIOS**.
+- Entorno principal: **Niri + noctalia** (Wayland).
+- Entorno secundario: **i3** (X11).
+- Gestor de sesiones: **greetd + tuigreet**.
 - Administrador de archivos **Thunar**.
 - Navegador **qutebrowser**.
 - Terminal **Alacritty** y editor **Neovim**.
@@ -22,60 +25,54 @@ para uso personal y como punto de partida para una posible ISO futura.
 - Optimizaciones para **laptops**: `tlp`, `brightnessctl`, `libinput`.
 - Usuario predeterminado: `linX` / `12345`.
 - Acceso root bloqueado; se usa `sudo`.
+- Teclado de consola: `us`.
+- Locale: `es_MX.UTF-8`.
+- Zona horaria: `America/Mexico_City`.
 
 ## Requisitos
 
-- USB o ISO de Arch Linux oficial en modo live.
-- Conexión a internet.
-- Ejecutar como `root`.
+- `archiso` instalado.
+- Conexion a internet para descargar paquetes.
+- Espacio libre en disco (la ISO ocupa varios GB).
 
-## Uso
+## Construir la ISO
 
-1. Arranca con el ISO oficial de Arch Linux.
-2. Conecta a internet.
-3. Clona este repositorio:
+```bash
+sudo mkarchiso -v -w ./work -o ./out ./archiso
+```
 
-   ```bash
-   pacman -Sy git
-   git clone https://github.com/tu-usuario/Arch-linX.git
-   cd Arch-linX
-   ```
+La ISO resultante quedara en:
 
-4. Ejecuta el script indicando el disco de destino:
+```bash
+./out/arch-linx-YYYY.MM.DD-x86_64.iso
+```
 
-   ```bash
-   ./install.sh /dev/sda
-   ```
+## Usar la ISO
 
-   También puedes ejecutarlo sin argumentos para ver los discos disponibles:
-
-   ```bash
-   ./install.sh
-   ```
-
-5. Confirma escribiendo `SI` cuando se te pida.
-6. Espera a que termine y reinicia:
-
-   ```bash
-   reboot
-   ```
+1. Graba o monta la ISO en un USB o maquina virtual.
+2. Arranca desde la ISO.
+3. En el gestor de inicio (`tuigreet`), elige entre **Niri** o **i3**.
+4. Inicia sesion con:
+   - Usuario: `linX`
+   - Contrasena: `12345`
 
 ## Advertencias
 
-- **El script borra TODO el contenido del disco seleccionado.**
-- No uses este script en hardware real sin probarlo antes en una máquina virtual.
-- Esta es una versión inicial (v0.1); úsala bajo tu propia responsabilidad.
+- Esta es una version inicial (v0.1); usala bajo tu propia responsabilidad.
+- No incluye instalador a disco por ahora; es un sistema live.
+- Prueba en maquina virtual antes de usar en hardware real.
 
-## Próximos pasos
+## Proximos pasos
 
-- Selección interactiva de disco.
-- Soporte para swap, `/home` separada y particionado manual.
-- Instalación opcional de **i3** y **OpenBox**.
-- Personalización con dotfiles y temas.
-- Generación de ISO con `archiso`.
+- Persistencia de datos en USB.
+- Instalador a disco opcional.
+- Personalizacion con dotfiles y temas.
+- Soporte opcional para OpenBox.
 
 ## Referencias
 
-- [Guía oficial de instalación de Arch](https://wiki.archlinux.org/title/Installation_guide)
+- [Guia oficial de instalacion de Arch](https://wiki.archlinux.org/title/Installation_guide)
 - [archiso](https://wiki.archlinux.org/title/Archiso)
 - [Niri](https://github.com/YaLTeR/niri)
+- [noctalia](https://github.com/noctalia-dev/noctalia)
+- [i3](https://i3wm.org/)

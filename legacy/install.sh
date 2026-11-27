@@ -18,7 +18,7 @@ USERNAME="linX"
 USER_PASSWORD="12345"
 TIMEZONE="America/Mexico_City"
 LOCALE="es_MX.UTF-8"
-KEYMAP="es"
+KEYMAP="us"
 
 # -----------------------------------------------------------------------------
 # Funciones de utilidad
@@ -155,8 +155,16 @@ mount_partitions() {
 # -----------------------------------------------------------------------------
 # Instalacion base
 # -----------------------------------------------------------------------------
+enable_multilib() {
+    info "Habilitando repositorio multilib..."
+    sed -i '/\[multilib\]/,/Include/s/^#//' /etc/pacman.conf
+    pacman -Sy
+}
+
 install_base() {
     info "Instalando paquetes base. Esto puede tardar varios minutos..."
+
+    enable_multilib
 
     local pkgs=(
         # Base del sistema
@@ -178,15 +186,23 @@ install_base() {
 
         # Drivers de video Intel y AMD
         mesa lib32-mesa xf86-video-amdgpu xf86-video-ati xf86-video-intel
-        vulkan-radeon intel-vulkan-driver intel-ucode amd-ucode
+        vulkan-radeon vulkan-intel intel-ucode amd-ucode
 
         # Laptop
         tlp brightnessctl libinput
 
-        # Entorno grafico (Niri / Wayland)
-        niri xorg-xwayland waybar fuzzel mako wl-clipboard grim slurp
+        # Entorno grafico 1: Niri + Noctalia (Wayland)
+        niri noctalia xorg-xwayland wl-clipboard
         xdg-desktop-portal xdg-desktop-portal-gnome xdg-user-dirs
         polkit
+
+        # Entorno grafico 2: i3 (X11)
+        i3-wm i3status i3lock dmenu
+        xorg-server xorg-xinit xorg-xrandr xorg-xset xorg-xinput
+        picom feh dunst
+
+        # Gestor de sesiones
+        greetd greetd-tuigreet
 
         # Administrador de archivos
         thunar thunar-volman gvfs ntfs-3g exfat-utils
@@ -256,12 +272,45 @@ info "Configurando sudo..."
 echo "%wheel ALL=(ALL:ALL) ALL" > /etc/sudoers.d/wheel
 chmod 440 /etc/sudoers.d/wheel
 
+# Archivos de sesion para el gestor de inicio
+info "Creando archivos de sesion..."
+mkdir -p /usr/share/wayland-sessions /usr/share/xsessions
+
+cat > /usr/share/wayland-sessions/niri.desktop <<EOF
+[Desktop Entry]
+Name=Niri
+Comment=Scrollable-tiling Wayland compositor
+Exec=niri
+Type=Application
+EOF
+
+cat > /usr/share/xsessions/i3.desktop <<EOF
+[Desktop Entry]
+Name=i3
+Comment=i3 tiling window manager
+Exec=i3
+Type=Application
+EOF
+
+# Configuracion de greetd
+info "Configurando greetd..."
+mkdir -p /etc/greetd
+cat > /etc/greetd/config.toml <<EOF
+[terminal]
+vt = 1
+
+[default_session]
+command = "tuigreet --time --remember --remember-session --asterisks"
+user = "${USERNAME}"
+EOF
+
 # Servicios
 info "Habilitando servicios..."
 systemctl enable NetworkManager.service
 systemctl enable systemd-timesyncd.service
 systemctl enable fstrim.timer
 systemctl enable tlp.service
+systemctl enable greetd.service
 
 # Inicializar initramfs
 info "Regenerando initramfs..."
